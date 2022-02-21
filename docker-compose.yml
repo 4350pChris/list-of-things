@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  list-of-things:
+    build: .
+    restart: unless-stopped
+    networks:
+      - docker-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lot-secure.entrypoints=https"
+      - "traefik.http.routers.lot-secure.rule=Host(`lot.ennen.dev`)"
+      - "traefik.http.routers.lot-secure.tls=true"
+      - "traefik.http.routers.lot-secure.tls.certresolver=http"
+      - "traefik.http.routers.lot-secure.service=lot"
+      - "traefik.http.routers.lot-secure.middlewares=default-headers@file"
+      - "traefik.http.services.lot.loadbalancer.server.port=80"
+      - "traefik.docker.network=docker-network"
+
+networks:
+  docker-network:
+    external: true
